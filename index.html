@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tes Minat RIASEC</title>
-  <!-- Firebase SDK modular via CDN -->
   <script type="importmap">
     {
       "imports": {
@@ -88,31 +87,20 @@
     .btn-secondary:hover {
       background: #27ae60;
     }
-    .section {
-      margin: 30px 0;
-      border-left: 5px solid #3498db;
-      padding-left: 20px;
+    .question-block {
+      margin: 20px 0;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid #3498db;
     }
-    .section h2 {
-      color: #2c3e50;
-    }
-    .question {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #ecf0f1;
-      flex-wrap: wrap;
-    }
-    .question span {
-      flex: 1;
-      margin-right: 15px;
-      min-width: 180px;
+    .question-text {
+      font-size: 16px;
+      margin-bottom: 8px;
     }
     .options label {
-      margin: 0 8px 0 0;
+      margin-right: 20px;
       cursor: pointer;
-      white-space: nowrap;
     }
     .options input[type="radio"] {
       margin-right: 4px;
@@ -178,11 +166,6 @@
     .admin-link a:hover {
       color: #3498db;
     }
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #7f8c8d;
-    }
     .history-box {
       margin-top: 30px;
       padding: 20px;
@@ -195,12 +178,9 @@
       border-bottom: 1px dashed #ddd;
     }
     @media (max-width: 600px) {
-      .question {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .options {
-        margin-top: 6px;
+      .options label {
+        display: inline-block;
+        margin-right: 12px;
       }
     }
   </style>
@@ -211,7 +191,7 @@
     <h1>🧠 Tes Minat RIASEC</h1>
     <p style="text-align:center; color:#555;" id="userStatus">⏳ Menyiapkan sesi aman...</p>
 
-    <!-- FORM REGISTRASI PESERTA -->
+    <!-- FORM REGISTRASI -->
     <div id="registrationForm">
       <div class="form-group">
         <label>Nama Lengkap</label>
@@ -237,7 +217,7 @@
       <button class="btn-primary" id="startBtn">🚀 Mulai Tes</button>
     </div>
 
-    <!-- KONTENER SOAL -->
+    <!-- KONTENER SOAL (acak, tanpa label kategori) -->
     <div id="testContainer" class="hidden">
       <div id="questionsContainer"></div>
       <button class="btn-primary" id="submitBtn">📊 Lihat Hasil & Simpan</button>
@@ -266,14 +246,10 @@
 
   <script type="module">
     // ============================================================
-    // 1. IMPOR FIREBASE SDK (menggunakan import map)
+    // 1. IMPOR FIREBASE
     // ============================================================
     import { initializeApp } from 'firebase/app';
-    import {
-      getAuth,
-      signInAnonymously,
-      onAuthStateChanged
-    } from 'firebase/auth';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
     import {
       getFirestore,
       collection,
@@ -297,7 +273,6 @@
       appId: '1:940488035527:web:2157e4235363cc4f4802e2'
     };
 
-    // Inisialisasi Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -306,7 +281,6 @@
     // 3. LOGIN ANONIM OTOMATIS
     // ============================================================
     let currentUid = null;
-
     const userStatusEl = document.getElementById('userStatus');
 
     onAuthStateChanged(auth, async (user) => {
@@ -326,7 +300,7 @@
     });
 
     // ============================================================
-    // 4. DATA SOAL & DESKRIPSI (dari PDF RIASEC_copy.pdf)
+    // 4. DATA KATEGORI & PERTANYAAN
     // ============================================================
     const categories = [{
       id: 'R',
@@ -409,7 +383,32 @@
     }];
 
     // ============================================================
-    // 5. LOGIKA APLIKASI
+    // 5. BUAT DAFTAR SEMUA PERTANYAAN + ACKAN
+    // ============================================================
+    function buildShuffledQuestions() {
+      const all = [];
+      categories.forEach((cat, catIdx) => {
+        cat.questions.forEach((text, qIdx) => {
+          all.push({
+            catId: cat.id,
+            catIdx: catIdx,
+            qIdx: qIdx,
+            text: text
+          });
+        });
+      });
+      // Fisher-Yates shuffle
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
+      }
+      return all;
+    }
+
+    let shuffledQuestions = [];
+
+    // ============================================================
+    // 6. LOGIKA APLIKASI
     // ============================================================
     let pesertaData = {};
 
@@ -424,7 +423,6 @@
     const historyContainer = document.getElementById('historyContainer');
     const historyList = document.getElementById('historyList');
 
-    // Tombol Mulai Tes
     startBtn.addEventListener('click', function () {
       const nama = document.getElementById('nama').value.trim();
       const pendidikan = document.getElementById('pendidikan').value;
@@ -434,49 +432,49 @@
       if (!umur || umur < 1) { alert('Umur wajib diisi dengan angka yang valid!'); return; }
 
       pesertaData = { nama, pendidikan, umur };
-
       registrationForm.classList.add('hidden');
       testContainer.classList.remove('hidden');
-      renderQuestions();
+
+      // Buat ulang pertanyaan acak setiap kali memulai
+      shuffledQuestions = buildShuffledQuestions();
+      renderShuffledQuestions();
     });
 
-    function renderQuestions() {
+    function renderShuffledQuestions() {
       questionsContainer.innerHTML = '';
-      categories.forEach((cat, idx) => {
-        const sectionDiv = document.createElement('div');
-        sectionDiv.className = 'section';
-        sectionDiv.innerHTML = `<h2>${cat.label}</h2>`;
-        cat.questions.forEach((q, qIdx) => {
-          const qDiv = document.createElement('div');
-          qDiv.className = 'question';
-          const qSpan = document.createElement('span');
-          qSpan.textContent = `${qIdx + 1}. ${q}`;
-          qDiv.appendChild(qSpan);
-          const optDiv = document.createElement('div');
-          optDiv.className = 'options';
-          const radioSet = [
-            { value: '1', label: 'Setuju' },
-            { value: '0', label: 'Tidak Setuju' }
-          ];
-          radioSet.forEach(r => {
-            const label = document.createElement('label');
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.name = `q_${idx}_${qIdx}`;
-            input.value = r.value;
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(' ' + r.label));
-            optDiv.appendChild(label);
-            optDiv.appendChild(document.createTextNode(' '));
-          });
-          qDiv.appendChild(optDiv);
-          sectionDiv.appendChild(qDiv);
+      shuffledQuestions.forEach((item, index) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        const qText = document.createElement('div');
+        qText.className = 'question-text';
+        qText.textContent = `${index + 1}. ${item.text}`;
+        block.appendChild(qText);
+
+        const optDiv = document.createElement('div');
+        optDiv.className = 'options';
+        const radioSet = [
+          { value: '1', label: 'Setuju' },
+          { value: '0', label: 'Tidak Setuju' }
+        ];
+        radioSet.forEach(r => {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `q_${index}`; // nama unik berdasarkan posisi acak
+          input.value = r.value;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(' ' + r.label));
+          optDiv.appendChild(label);
+          optDiv.appendChild(document.createTextNode(' '));
         });
-        questionsContainer.appendChild(sectionDiv);
+        block.appendChild(optDiv);
+        questionsContainer.appendChild(block);
       });
     }
 
-    // Tombol Submit & Simpan
+    // ============================================================
+    // 7. SUBMIT & HITUNG SKOR
+    // ============================================================
     submitBtn.addEventListener('click', async function () {
       const btn = this;
       btn.disabled = true;
@@ -489,53 +487,55 @@
         return;
       }
 
-      // Hitung skor per kategori
-      const scores = categories.map((cat, idx) => {
-        let total = 0;
-        for (let qIdx = 0; qIdx < cat.questions.length; qIdx++) {
-          const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
-          let selected = null;
-          radios.forEach(r => { if (r.checked) selected = r.value; });
-          if (selected === '1') total += 1;
+      // Kumpulkan jawaban dari semua pertanyaan acak
+      const answers = [];
+      for (let i = 0; i < shuffledQuestions.length; i++) {
+        const radios = document.querySelectorAll(`input[name="q_${i}"]`);
+        let selected = null;
+        radios.forEach(r => { if (r.checked) selected = r.value; });
+        if (selected === null) {
+          alert(`Pertanyaan nomor ${i + 1} belum dijawab. Harap lengkapi semua!`);
+          btn.disabled = false;
+          btn.textContent = '📊 Lihat Hasil & Simpan';
+          return;
         }
-        return { id: cat.id, label: cat.label, score: total, desc: cat.desc };
+        answers.push(parseInt(selected, 10)); // 1 = setuju, 0 = tidak
+      }
+
+      // Hitung skor per kategori
+      const scoreMap = {};
+      categories.forEach(cat => { scoreMap[cat.id] = 0; });
+
+      shuffledQuestions.forEach((item, idx) => {
+        const catId = item.catId;
+        if (answers[idx] === 1) {
+          scoreMap[catId] = (scoreMap[catId] || 0) + 1;
+        }
       });
 
-      // Validasi semua pertanyaan sudah dijawab
-      let allAnswered = true;
-      for (let idx = 0; idx < categories.length; idx++) {
-        for (let qIdx = 0; qIdx < categories[idx].questions.length; qIdx++) {
-          const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
-          let checked = false;
-          radios.forEach(r => { if (r.checked) checked = true; });
-          if (!checked) allAnswered = false;
-        }
-      }
-      if (!allAnswered) {
-        alert('Masih ada pertanyaan yang belum dijawab. Harap lengkapi semua!');
-        btn.disabled = false;
-        btn.textContent = '📊 Lihat Hasil & Simpan';
-        return;
-      }
+      // Bentuk array skor untuk ditampilkan
+      const scores = categories.map(cat => ({
+        id: cat.id,
+        label: cat.label,
+        score: scoreMap[cat.id] || 0,
+        desc: cat.desc
+      }));
 
-      const scoreObj = {};
-      scores.forEach(s => { scoreObj[s.id] = s.score; });
-
+      // Simpan ke Firestore
       const dataToSave = {
         nama: pesertaData.nama,
         pendidikan: pesertaData.pendidikan,
         umur: pesertaData.umur,
-        scores: scoreObj,
+        scores: scoreMap,
         uid: currentUid,
         timestamp: serverTimestamp()
       };
 
       try {
-        // Simpan ke Firestore
         await addDoc(collection(db, 'riasec_results'), dataToSave);
         console.log('Data berhasil disimpan!');
 
-        // Tampilkan hasil ke peserta
+        // Tampilkan hasil (urut dari skor tertinggi)
         const sorted = scores.slice().sort((a, b) => b.score - a.score);
         resultsContainer.style.display = 'block';
         resultList.innerHTML = '';
@@ -567,7 +567,7 @@
     });
 
     // ============================================================
-    // 6. FITUR "RIWAYAT HASIL SAYA" (hanya data milik sendiri)
+    // 8. RIWAYAT PRIBADI (tetap sama)
     // ============================================================
     historyBtn.addEventListener('click', async function () {
       historyContainer.classList.remove('hidden');
