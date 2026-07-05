@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tes Minat RIASEC</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #f5f7fa; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 12px; }
+    .section { margin: 30px 0; border-left: 5px solid #3498db; padding-left: 20px; }
+    .section h2 { color: #2c3e50; margin-bottom: 10px; }
+    .question { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ecf0f1; }
+    .question span { flex: 1; margin-right: 15px; }
+    .options label { margin: 0 8px; cursor: pointer; }
+    .options input[type="radio"] { margin-right: 4px; }
+    .btn { display: block; width: 100%; padding: 14px; background: #3498db; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; margin: 30px 0; transition: 0.2s; }
+    .btn:hover { background: #2980b9; }
+    .results { margin-top: 30px; padding: 20px; background: #eaf2f8; border-radius: 12px; display: none; }
+    .result-item { background: white; padding: 16px 20px; margin: 12px 0; border-radius: 10px; border-left: 8px solid #3498db; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .result-item h3 { margin: 0; color: #2c3e50; }
+    .result-item .score { font-weight: bold; color: #e67e22; font-size: 1.2em; }
+    .result-item .desc { margin-top: 8px; color: #34495e; }
+    .rank-badge { display: inline-block; background: #2c3e50; color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 12px; }
+    .footer { text-align: center; margin-top: 30px; color: #7f8c8d; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 Tes Minat RIASEC</h1>
+  <p style="text-align:center; color:#555;">Jawab setiap pernyataan dengan jujur. Pilih <strong>Setuju</strong> atau <strong>Tidak Setuju</strong>.</p>
+
+  <!-- 6 bagian akan dibuat oleh JavaScript -->
+  <div id="questionsContainer"></div>
+
+  <button class="btn" id="submitBtn">🔍 Lihat Hasil Saya</button>
+
+  <div class="results" id="resultsContainer">
+    <h2 style="text-align:center; color:#2c3e50;">🎯 Tiga Minat Tertinggi Anda</h2>
+    <div id="resultList"></div>
+  </div>
+  <div class="footer">Berdasarkan teori Holland · Kode minat membantu menemukan jurusan/karier yang cocok.</div>
+</div>
+
+<script>
+  // ========== DATA PERTANYAAN (6 bagian × 7 pertanyaan) ==========
+  const categories = [
+    {
+      id: 'R',
+      label: 'Realistik (R)',
+      desc: 'Orang Realistik suka pekerjaan mekanik, outdoor, atau olahraga. Mereka praktis dan suka bekerja dengan alat, mesin, atau hewan. Cocok untuk jurusan: Pertanian, Teknik, Komputer, Konstruksi, Mekanik, Kesehatan, Perhotelan.',
+      questions: [
+        'Saya suka memperbaiki barang-barang rusak.',
+        'Saya lebih suka bekerja di luar ruangan.',
+        'Saya menikmati kegiatan fisik seperti olahraga.',
+        'Saya tertarik dengan cara kerja mesin.',
+        'Saya suka membuat atau merakit sesuatu dengan tangan.',
+        'Saya lebih memilih pekerjaan yang aktif daripada duduk di meja.',
+        'Saya sering menggunakan alat-alat perkakas.'
+      ]
+    },
+    {
+      id: 'I',
+      label: 'Investigatif (I)',
+      desc: 'Orang Investigatif suka mengamati, belajar, menganalisis, dan memecahkan masalah. Mereka ilmiah dan rasa ingin tahu tinggi. Jurusan yang cocok: Biologi Laut, Teknik Kimia, Zoologi, Kedokteran, Psikologi, Ekonomi Konsumen.',
+      questions: [
+        'Saya suka memecahkan teka-teki atau soal logika.',
+        'Saya senang melakukan eksperimen ilmiah.',
+        'Saya suka membaca buku nonfiksi tentang sains.',
+        'Saya sering bertanya “mengapa” tentang hal-hal di sekitar.',
+        'Saya menikmati penelitian untuk menemukan jawaban.',
+        'Saya suka menganalisis data atau statistik.',
+        'Saya tertarik dengan penemuan-penemuan baru.'
+      ]
+    },
+    {
+      id: 'A',
+      label: 'Artistik (A)',
+      desc: 'Orang Artistik suka bekerja dalam situasi tidak terstruktur, menggunakan kreativitas dan imajinasi. Jurusan: Komunikasi, Tata Rias, Seni Pertunjukan, Fotografi, Radio/TV, Desain Interior, Arsitektur.',
+      questions: [
+        'Saya suka menggambar, melukis, atau membuat kerajinan.',
+        'Saya menikmati menulis cerita atau puisi.',
+        'Saya suka mendesain tampilan sesuatu (misal ruangan, pakaian).',
+        'Saya sering berimajinasi dan berkhayal.',
+        'Saya menikmati pertunjukan seni seperti teater atau musik.',
+        'Saya lebih suka pekerjaan yang memungkinkan ekspresi bebas.',
+        'Saya suka memotret atau membuat video kreatif.'
+      ]
+    },
+    {
+      id: 'S',
+      label: 'Sosial (S)',
+      desc: 'Orang Sosial suka bekerja dengan orang lain, membantu, mengajar, atau melayani. Jurusan: Konseling, Keperawatan, Fisioterapi, Pariwisata, Periklanan, Hubungan Masyarakat, Pendidikan.',
+      questions: [
+        'Saya suka membantu teman yang sedang kesulitan.',
+        'Saya menikmati menjadi relawan di kegiatan sosial.',
+        'Saya lebih suka bekerja dalam tim daripada sendiri.',
+        'Saya mudah berempati dengan perasaan orang lain.',
+        'Saya suka mengajar atau menjelaskan sesuatu kepada orang lain.',
+        'Saya menikmati berbicara dan berinteraksi dengan banyak orang.',
+        'Saya peduli terhadap kesejahteraan orang lain.'
+      ]
+    },
+    {
+      id: 'E',
+      label: 'Enterprising (E)',
+      desc: 'Orang Enterprising suka memimpin, membujuk, dan berkinerja. Mereka enerjik dan suka tantangan. Jurusan: Merchandising, Real Estat, Pemasaran, Hukum, Ilmu Politik, Perdagangan Internasional, Perbankan/Keuangan.',
+      questions: [
+        'Saya suka menjadi pemimpin dalam sebuah proyek.',
+        'Saya menikmati mempromosikan atau menjual sesuatu.',
+        'Saya suka mempengaruhi orang lain untuk mengikuti ide saya.',
+        'Saya tertarik dengan dunia bisnis dan keuangan.',
+        'Saya suka berkompetisi dan memenangkan perlombaan.',
+        'Saya percaya diri berbicara di depan umum.',
+        'Saya suka mengambil risiko untuk mencapai tujuan.'
+      ]
+    },
+    {
+      id: 'C',
+      label: 'Konvensional (C)',
+      desc: 'Orang Konvensional sangat detail, terorganisir, dan suka bekerja dengan data. Jurusan: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data.',
+      questions: [
+        'Saya suka mengatur dan merapikan barang-barang.',
+        'Saya teliti dalam mengecek detail pekerjaan.',
+        'Saya lebih suka pekerjaan yang terstruktur dan rutin.',
+        'Saya menikmati mengelola data atau arsip.',
+        'Saya suka membuat daftar dan jadwal.',
+        'Saya patuh pada prosedur dan aturan yang ada.',
+        'Saya lebih suka pekerjaan kantoran dengan sistem yang jelas.'
+      ]
+    }
+  ];
+
+  // ========== RENDER PERTANYAAN ==========
+  const container = document.getElementById('questionsContainer');
+  categories.forEach((cat, idx) => {
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'section';
+    sectionDiv.innerHTML = `<h2>${cat.label}</h2>`;
+    cat.questions.forEach((q, qIdx) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      const qSpan = document.createElement('span');
+      qSpan.textContent = `${qIdx+1}. ${q}`;
+      qDiv.appendChild(qSpan);
+      const optDiv = document.createElement('div');
+      optDiv.className = 'options';
+      // Radio setuju/tidak
+      const radioSet = [
+        { value: '1', label: 'Setuju' },
+        { value: '0', label: 'Tidak Setuju' }
+      ];
+      radioSet.forEach(r => {
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `q_${idx}_${qIdx}`;
+        input.value = r.value;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + r.label));
+        optDiv.appendChild(label);
+        optDiv.appendChild(document.createTextNode(' '));
+      });
+      qDiv.appendChild(optDiv);
+      sectionDiv.appendChild(qDiv);
+    });
+    container.appendChild(sectionDiv);
+  });
+
+  // ========== PROSES HASIL ==========
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    // Kumpulkan skor per kategori
+    const scores = categories.map((cat, idx) => {
+      let total = 0;
+      for (let qIdx = 0; qIdx < cat.questions.length; qIdx++) {
+        const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
+        let selected = null;
+        radios.forEach(r => { if (r.checked) selected = r.value; });
+        if (selected === '1') total += 1;
+        // jika tidak dipilih atau '0' tidak menambah skor
+      }
+      return { id: cat.id, label: cat.label, score: total, desc: cat.desc };
+    });
+
+    // Urutkan dari skor tertinggi
+    const sorted = scores.slice().sort((a, b) => b.score - a.score);
+    const top3 = sorted.slice(0, 3);
+
+    // Tampilkan hasil
+    const resultContainer = document.getElementById('resultsContainer');
+    resultContainer.style.display = 'block';
+    const list = document.getElementById('resultList');
+    list.innerHTML = '';
+    top3.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'result-item';
+      // warna border sesuai urutan
+      const colors = ['#e67e22', '#3498db', '#2ecc71'];
+      div.style.borderLeftColor = colors[index] || '#3498db';
+      div.innerHTML = `
+        <div style="display:flex; align-items:center;">
+          <span class="rank-badge">${index+1}</span>
+          <h3>${item.label} <span class="score">(${item.score}/7)</span></h3>
+        </div>
+        <div class="desc">${item.desc}</div>
+      `;
+      list.appendChild(div);
+    });
+
+    // Scroll ke hasil
+    resultContainer.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
