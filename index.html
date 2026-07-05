@@ -1,59 +1,337 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tes Minat RIASEC</title>
+  <!-- Firebase SDK modular via CDN -->
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js"
+      }
+    }
+  </script>
   <style>
-    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-    body { background: #f5f7fa; margin: 0; padding: 20px; }
-    .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-    h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 12px; }
-    .section { margin: 30px 0; border-left: 5px solid #3498db; padding-left: 20px; }
-    .section h2 { color: #2c3e50; margin-bottom: 10px; }
-    .question { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ecf0f1; flex-wrap: wrap; }
-    .question span { flex: 1; margin-right: 15px; min-width: 180px; }
-    .options label { margin: 0 8px 0 0; cursor: pointer; white-space: nowrap; }
-    .options input[type="radio"] { margin-right: 4px; }
-    .btn { display: block; width: 100%; padding: 14px; background: #3498db; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; margin: 30px 0; transition: 0.2s; }
-    .btn:hover { background: #2980b9; }
-    .results { margin-top: 30px; padding: 20px; background: #eaf2f8; border-radius: 12px; display: none; }
-    .result-item { background: white; padding: 16px 20px; margin: 12px 0; border-radius: 10px; border-left: 8px solid #3498db; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-    .result-item h3 { margin: 0; color: #2c3e50; }
-    .result-item .score { font-weight: bold; color: #e67e22; font-size: 1.2em; }
-    .result-item .desc { margin-top: 8px; color: #34495e; line-height: 1.6; }
-    .rank-badge { display: inline-block; background: #2c3e50; color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 12px; }
-    .footer { text-align: center; margin-top: 30px; color: #7f8c8d; font-size: 0.9em; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    body {
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 12px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #2c3e50;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.2s;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-primary:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-secondary:hover {
+      background: #27ae60;
+    }
+    .section {
+      margin: 30px 0;
+      border-left: 5px solid #3498db;
+      padding-left: 20px;
+    }
+    .section h2 {
+      color: #2c3e50;
+    }
+    .question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ecf0f1;
+      flex-wrap: wrap;
+    }
+    .question span {
+      flex: 1;
+      margin-right: 15px;
+      min-width: 180px;
+    }
+    .options label {
+      margin: 0 8px 0 0;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .options input[type="radio"] {
+      margin-right: 4px;
+    }
+    .results {
+      margin-top: 30px;
+      padding: 20px;
+      background: #eaf2f8;
+      border-radius: 12px;
+      display: none;
+    }
+    .result-item {
+      background: white;
+      padding: 16px 20px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border-left: 8px solid #3498db;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .result-item h3 {
+      margin: 0;
+    }
+    .result-item .score {
+      font-weight: bold;
+      color: #e67e22;
+      font-size: 1.2em;
+    }
+    .result-item .desc {
+      margin-top: 8px;
+      color: #34495e;
+      line-height: 1.6;
+    }
+    .rank-badge {
+      display: inline-block;
+      background: #2c3e50;
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      text-align: center;
+      line-height: 28px;
+      font-weight: bold;
+      margin-right: 12px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+    .hidden {
+      display: none;
+    }
+    .admin-link {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .admin-link a {
+      color: #7f8c8d;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .admin-link a:hover {
+      color: #3498db;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7f8c8d;
+    }
+    .history-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fef9e7;
+      border-radius: 12px;
+      border: 1px solid #f1c40f;
+    }
+    .history-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed #ddd;
+    }
     @media (max-width: 600px) {
-      .question { flex-direction: column; align-items: flex-start; }
-      .options { margin-top: 6px; }
+      .question {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .options {
+        margin-top: 6px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>🧠 Tes Minat RIASEC</h1>
-  <p style="text-align:center; color:#555;">Jawab setiap pernyataan dengan jujur. Pilih <strong>Setuju</strong> atau <strong>Tidak Setuju</strong>.</p>
+  <div class="container">
+    <div class="admin-link"><a href="admin.html" target="_blank">👤 Admin Panel</a></div>
+    <h1>🧠 Tes Minat RIASEC</h1>
+    <p style="text-align:center; color:#555;" id="userStatus">⏳ Menyiapkan sesi aman...</p>
 
-  <div id="questionsContainer"></div>
+    <!-- FORM REGISTRASI PESERTA -->
+    <div id="registrationForm">
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="nama" placeholder="Masukkan nama Anda" required />
+      </div>
+      <div class="form-group">
+        <label>Jenjang Pendidikan</label>
+        <select id="pendidikan">
+          <option value="SD">SD</option>
+          <option value="SMP">SMP</option>
+          <option value="SMA/SMK">SMA/SMK</option>
+          <option value="D3">D3</option>
+          <option value="S1">S1</option>
+          <option value="S2">S2</option>
+          <option value="S3">S3</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Umur (tahun)</label>
+        <input type="number" id="umur" placeholder="Contoh: 22" min="1" max="120" required />
+      </div>
+      <button class="btn-primary" id="startBtn">🚀 Mulai Tes</button>
+    </div>
 
-  <button class="btn" id="submitBtn">🔍 Lihat Hasil Saya</button>
+    <!-- KONTENER SOAL -->
+    <div id="testContainer" class="hidden">
+      <div id="questionsContainer"></div>
+      <button class="btn-primary" id="submitBtn">📊 Lihat Hasil & Simpan</button>
+    </div>
 
-  <div class="results" id="resultsContainer">
-    <h2 style="text-align:center; color:#2c3e50;">📊 Semua Hasil Minat (Diurutkan dari Tertinggi ke Terendah)</h2>
-    <div id="resultList"></div>
+    <!-- KONTENER HASIL -->
+    <div class="results" id="resultsContainer">
+      <h2 style="text-align:center; color:#2c3e50;">📊 Hasil Minat Saya</h2>
+      <div id="resultList"></div>
+      <p style="text-align:center; margin-top:20px; color:#2c3e50;">
+        ✅ Data Anda telah tersimpan dengan aman.
+      </p>
+      <button class="btn-secondary" id="historyBtn">📜 Lihat Riwayat Hasil Saya</button>
+    </div>
+
+    <!-- RIWAYAT PRIBADI -->
+    <div id="historyContainer" class="hidden history-box">
+      <h3>📜 Riwayat Tes Saya</h3>
+      <div id="historyList"><em>Memuat...</em></div>
+    </div>
+
+    <div class="footer">
+      Berdasarkan teori Holland · Kode minat membantu menemukan jurusan/karier yang cocok.
+    </div>
   </div>
-  <div class="footer">Berdasarkan teori Holland · Kode minat membantu menemukan jurusan/karier yang cocok.</div>
-</div>
 
-<script>
-  // ========== DATA PERTANYAAN (6 bagian × 7 pertanyaan) ==========
-  // Deskripsi dan jalur terkait disesuaikan persis dengan isi file PDF RIASEC_copy.pdf
-  const categories = [
-    {
+  <script type="module">
+    // ============================================================
+    // 1. IMPOR FIREBASE SDK (menggunakan import map)
+    // ============================================================
+    import { initializeApp } from 'firebase/app';
+    import {
+      getAuth,
+      signInAnonymously,
+      onAuthStateChanged
+    } from 'firebase/auth';
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      getDocs,
+      serverTimestamp
+    } from 'firebase/firestore';
+
+    // ============================================================
+    // 2. KONFIGURASI FIREBASE (dari Anda)
+    // ============================================================
+    const firebaseConfig = {
+      apiKey: 'AIzaSyCU-KgCUo-ma5chOEVpnZ2ycpVWC2spIg8',
+      authDomain: 'tes-riasec-rana.firebaseapp.com',
+      projectId: 'tes-riasec-rana',
+      storageBucket: 'tes-riasec-rana.firebasestorage.app',
+      messagingSenderId: '940488035527',
+      appId: '1:940488035527:web:2157e4235363cc4f4802e2'
+    };
+
+    // Inisialisasi Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ============================================================
+    // 3. LOGIN ANONIM OTOMATIS
+    // ============================================================
+    let currentUid = null;
+
+    const userStatusEl = document.getElementById('userStatus');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUid = user.uid;
+        userStatusEl.innerHTML = `✅ Sesi aman aktif (ID: ${currentUid.substring(0, 8)}...)`;
+      } else {
+        try {
+          const cred = await signInAnonymously(auth);
+          currentUid = cred.user.uid;
+          userStatusEl.innerHTML = `✅ Sesi anonim aktif (ID: ${currentUid.substring(0, 8)}...)`;
+        } catch (error) {
+          console.error('Gagal login anonim:', error);
+          userStatusEl.innerHTML = '❌ Gagal membuat sesi aman. Refresh halaman.';
+        }
+      }
+    });
+
+    // ============================================================
+    // 4. DATA SOAL & DESKRIPSI (dari PDF RIASEC_copy.pdf)
+    // ============================================================
+    const categories = [{
       id: 'R',
       label: 'Realistik (R)',
-      desc: 'Orang Realistik sering pandai dalam pekerjaan mekanik atau atletik. Jurusan yang cocok: Pertanian, Asisten Kesehatan, Komputer, Konstruksi, Mekanik/Mesin, Teknik, Makanan dan Perhotelan. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Realistik sering pandai dalam pekerjaan mekanik atau atletik. Jurusan: Pertanian, Asisten Kesehatan, Komputer, Konstruksi, Mekanik/Mesin, Teknik, Makanan dan Perhotelan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka memperbaiki barang-barang rusak.',
         'Saya lebih suka bekerja di luar ruangan.',
@@ -63,25 +341,23 @@
         'Saya lebih memilih pekerjaan yang aktif daripada duduk di meja.',
         'Saya sering menggunakan alat-alat perkakas.'
       ]
-    },
-    {
+    }, {
       id: 'I',
       label: 'Investigatif (I)',
-      desc: 'Orang Investigatif suka mengamati, belajar, menganalisis dan memecahkan masalah. Jurusan yang cocok: Biologi Kelautan, Teknik, Kimia, Zoologi, Kedokteran/Bedah, Ekonomi Konsumen, Psikologi. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Investigatif suka mengamati, belajar, menganalisis dan memecahkan masalah. Jurusan: Biologi Kelautan, Teknik, Kimia, Zoologi, Kedokteran/Bedah, Ekonomi Konsumen, Psikologi. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka memecahkan teka-teki atau soal logika.',
         'Saya senang melakukan eksperimen ilmiah.',
         'Saya suka membaca buku nonfiksi tentang sains.',
-        'Saya sering bertanya “mengapa” tentang hal-hal di sekitar.',
+        'Saya sering bertanya "mengapa" tentang hal-hal di sekitar.',
         'Saya menikmati penelitian untuk menemukan jawaban.',
         'Saya suka menganalisis data atau statistik.',
         'Saya tertarik dengan penemuan-penemuan baru.'
       ]
-    },
-    {
+    }, {
       id: 'A',
       label: 'Artistik (A)',
-      desc: 'Orang Artistik suka bekerja dalam situasi tidak terstruktur di mana mereka dapat menggunakan kreativitas mereka. Jurusan yang cocok: Komunikasi, Tata Rias, Seni Pertunjukan, Fotografi, Radio dan TV, Desain Interior, Arsitektur. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Artistik suka bekerja dalam situasi tidak terstruktur di mana mereka dapat menggunakan kreativitas mereka. Jurusan: Komunikasi, Tata Rias, Seni Pertunjukan, Fotografi, Radio dan TV, Desain Interior, Arsitektur. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka menggambar, melukis, atau membuat kerajinan.',
         'Saya menikmati menulis cerita atau puisi.',
@@ -91,11 +367,10 @@
         'Saya lebih suka pekerjaan yang memungkinkan ekspresi bebas.',
         'Saya suka memotret atau membuat video kreatif.'
       ]
-    },
-    {
+    }, {
       id: 'S',
       label: 'Sosial (S)',
-      desc: 'Orang Sosial suka bekerja dengan orang lain, daripada benda. Jurusan yang cocok: Konseling, Keperawatan, Fisioterapi, Perjalanan/Travel, Periklanan, Hubungan Masyarakat, Pendidikan. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Sosial suka bekerja dengan orang lain, daripada benda. Jurusan: Konseling, Keperawatan, Fisioterapi, Perjalanan/Travel, Periklanan, Hubungan Masyarakat, Pendidikan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka membantu teman yang sedang kesulitan.',
         'Saya menikmati menjadi relawan di kegiatan sosial.',
@@ -105,11 +380,10 @@
         'Saya menikmati berbicara dan berinteraksi dengan banyak orang.',
         'Saya peduli terhadap kesejahteraan orang lain.'
       ]
-    },
-    {
+    }, {
       id: 'E',
       label: 'Enterprising (E)',
-      desc: 'Orang Enterprising suka bekerja dengan orang lain dan menikmati membujuk serta tampil. Jurusan yang cocok: Merchandising Busana, Real Estat, Pemasaran/Penjualan, Hukum, Ilmu Politik, Perdagangan Internasional, Perbankan/Keuangan. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Enterprising suka bekerja dengan orang lain dan menikmati membujuk serta tampil. Jurusan: Merchandising Busana, Real Estat, Pemasaran/Penjualan, Hukum, Ilmu Politik, Perdagangan Internasional, Perbankan/Keuangan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka menjadi pemimpin dalam sebuah proyek.',
         'Saya menikmati mempromosikan atau menjual sesuatu.',
@@ -119,11 +393,10 @@
         'Saya percaya diri berbicara di depan umum.',
         'Saya suka mengambil risiko untuk mencapai tujuan.'
       ]
-    },
-    {
+    }, {
       id: 'C',
       label: 'Konvensional (C)',
-      desc: 'Orang Konvensional sangat berorientasi pada detail, terorganisir dan suka bekerja dengan data. Jurusan yang cocok: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data. Jalur terkait: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+      desc: 'Orang Konvensional sangat berorientasi pada detail, terorganisir dan suka bekerja dengan data. Jurusan: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
         'Saya suka mengatur dan merapikan barang-barang.',
         'Saya teliti dalam mengecek detail pekerjaan.',
@@ -133,85 +406,217 @@
         'Saya patuh pada prosedur dan aturan yang ada.',
         'Saya lebih suka pekerjaan kantoran dengan sistem yang jelas.'
       ]
-    }
-  ];
+    }];
 
-  // ========== RENDER PERTANYAAN ==========
-  const container = document.getElementById('questionsContainer');
-  categories.forEach((cat, idx) => {
-    const sectionDiv = document.createElement('div');
-    sectionDiv.className = 'section';
-    sectionDiv.innerHTML = `<h2>${cat.label}</h2>`;
-    cat.questions.forEach((q, qIdx) => {
-      const qDiv = document.createElement('div');
-      qDiv.className = 'question';
-      const qSpan = document.createElement('span');
-      qSpan.textContent = `${qIdx+1}. ${q}`;
-      qDiv.appendChild(qSpan);
-      const optDiv = document.createElement('div');
-      optDiv.className = 'options';
-      const radioSet = [
-        { value: '1', label: 'Setuju' },
-        { value: '0', label: 'Tidak Setuju' }
-      ];
-      radioSet.forEach(r => {
-        const label = document.createElement('label');
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = `q_${idx}_${qIdx}`;
-        input.value = r.value;
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(' ' + r.label));
-        optDiv.appendChild(label);
-        optDiv.appendChild(document.createTextNode(' '));
+    // ============================================================
+    // 5. LOGIKA APLIKASI
+    // ============================================================
+    let pesertaData = {};
+
+    const startBtn = document.getElementById('startBtn');
+    const registrationForm = document.getElementById('registrationForm');
+    const testContainer = document.getElementById('testContainer');
+    const questionsContainer = document.getElementById('questionsContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultList = document.getElementById('resultList');
+    const historyBtn = document.getElementById('historyBtn');
+    const historyContainer = document.getElementById('historyContainer');
+    const historyList = document.getElementById('historyList');
+
+    // Tombol Mulai Tes
+    startBtn.addEventListener('click', function () {
+      const nama = document.getElementById('nama').value.trim();
+      const pendidikan = document.getElementById('pendidikan').value;
+      const umur = parseInt(document.getElementById('umur').value);
+
+      if (!nama) { alert('Nama wajib diisi!'); return; }
+      if (!umur || umur < 1) { alert('Umur wajib diisi dengan angka yang valid!'); return; }
+
+      pesertaData = { nama, pendidikan, umur };
+
+      registrationForm.classList.add('hidden');
+      testContainer.classList.remove('hidden');
+      renderQuestions();
+    });
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = '';
+      categories.forEach((cat, idx) => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'section';
+        sectionDiv.innerHTML = `<h2>${cat.label}</h2>`;
+        cat.questions.forEach((q, qIdx) => {
+          const qDiv = document.createElement('div');
+          qDiv.className = 'question';
+          const qSpan = document.createElement('span');
+          qSpan.textContent = `${qIdx + 1}. ${q}`;
+          qDiv.appendChild(qSpan);
+          const optDiv = document.createElement('div');
+          optDiv.className = 'options';
+          const radioSet = [
+            { value: '1', label: 'Setuju' },
+            { value: '0', label: 'Tidak Setuju' }
+          ];
+          radioSet.forEach(r => {
+            const label = document.createElement('label');
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `q_${idx}_${qIdx}`;
+            input.value = r.value;
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(' ' + r.label));
+            optDiv.appendChild(label);
+            optDiv.appendChild(document.createTextNode(' '));
+          });
+          qDiv.appendChild(optDiv);
+          sectionDiv.appendChild(qDiv);
+        });
+        questionsContainer.appendChild(sectionDiv);
       });
-      qDiv.appendChild(optDiv);
-      sectionDiv.appendChild(qDiv);
-    });
-    container.appendChild(sectionDiv);
-  });
+    }
 
-  // ========== PROSES HASIL ==========
-  document.getElementById('submitBtn').addEventListener('click', function() {
-    // Hitung skor per kategori
-    const scores = categories.map((cat, idx) => {
-      let total = 0;
-      for (let qIdx = 0; qIdx < cat.questions.length; qIdx++) {
-        const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
-        let selected = null;
-        radios.forEach(r => { if (r.checked) selected = r.value; });
-        if (selected === '1') total += 1;
+    // Tombol Submit & Simpan
+    submitBtn.addEventListener('click', async function () {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = '⏳ Menyimpan...';
+
+      if (!currentUid) {
+        alert('Sesi belum siap. Tunggu sebentar atau refresh halaman.');
+        btn.disabled = false;
+        btn.textContent = '📊 Lihat Hasil & Simpan';
+        return;
       }
-      return { id: cat.id, label: cat.label, score: total, desc: cat.desc };
+
+      // Hitung skor per kategori
+      const scores = categories.map((cat, idx) => {
+        let total = 0;
+        for (let qIdx = 0; qIdx < cat.questions.length; qIdx++) {
+          const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
+          let selected = null;
+          radios.forEach(r => { if (r.checked) selected = r.value; });
+          if (selected === '1') total += 1;
+        }
+        return { id: cat.id, label: cat.label, score: total, desc: cat.desc };
+      });
+
+      // Validasi semua pertanyaan sudah dijawab
+      let allAnswered = true;
+      for (let idx = 0; idx < categories.length; idx++) {
+        for (let qIdx = 0; qIdx < categories[idx].questions.length; qIdx++) {
+          const radios = document.querySelectorAll(`input[name="q_${idx}_${qIdx}"]`);
+          let checked = false;
+          radios.forEach(r => { if (r.checked) checked = true; });
+          if (!checked) allAnswered = false;
+        }
+      }
+      if (!allAnswered) {
+        alert('Masih ada pertanyaan yang belum dijawab. Harap lengkapi semua!');
+        btn.disabled = false;
+        btn.textContent = '📊 Lihat Hasil & Simpan';
+        return;
+      }
+
+      const scoreObj = {};
+      scores.forEach(s => { scoreObj[s.id] = s.score; });
+
+      const dataToSave = {
+        nama: pesertaData.nama,
+        pendidikan: pesertaData.pendidikan,
+        umur: pesertaData.umur,
+        scores: scoreObj,
+        uid: currentUid,
+        timestamp: serverTimestamp()
+      };
+
+      try {
+        // Simpan ke Firestore
+        await addDoc(collection(db, 'riasec_results'), dataToSave);
+        console.log('Data berhasil disimpan!');
+
+        // Tampilkan hasil ke peserta
+        const sorted = scores.slice().sort((a, b) => b.score - a.score);
+        resultsContainer.style.display = 'block';
+        resultList.innerHTML = '';
+        sorted.forEach((item, index) => {
+          const div = document.createElement('div');
+          div.className = 'result-item';
+          const colors = ['#e67e22', '#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#e74c3c'];
+          div.style.borderLeftColor = colors[index % colors.length];
+          div.innerHTML = `
+            <div style="display:flex; align-items:center; flex-wrap:wrap;">
+              <span class="rank-badge">${index + 1}</span>
+              <h3>${item.label} <span class="score">(${item.score}/7)</span></h3>
+            </div>
+            <div class="desc">${item.desc}</div>
+          `;
+          resultList.appendChild(div);
+        });
+
+        testContainer.classList.add('hidden');
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+
+      } catch (error) {
+        console.error('Gagal simpan:', error);
+        alert('Terjadi kesalahan saat menyimpan data. Coba lagi nanti.\n' + error.message);
+      }
+
+      btn.disabled = false;
+      btn.textContent = '📊 Lihat Hasil & Simpan';
     });
 
-    // Urutkan dari skor tertinggi ke terendah
-    const sorted = scores.slice().sort((a, b) => b.score - a.score);
+    // ============================================================
+    // 6. FITUR "RIWAYAT HASIL SAYA" (hanya data milik sendiri)
+    // ============================================================
+    historyBtn.addEventListener('click', async function () {
+      historyContainer.classList.remove('hidden');
+      historyList.innerHTML = '⏳ Memuat riwayat pribadi...';
 
-    // Tampilkan SEMUA hasil (6 kategori) sesuai urutan skor
-    const resultContainer = document.getElementById('resultsContainer');
-    resultContainer.style.display = 'block';
-    const list = document.getElementById('resultList');
-    list.innerHTML = '';
-    sorted.forEach((item, index) => {
-      const div = document.createElement('div');
-      div.className = 'result-item';
-      // Warna border berbeda agar menarik
-      const colors = ['#e67e22', '#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#e74c3c'];
-      div.style.borderLeftColor = colors[index % colors.length];
-      div.innerHTML = `
-        <div style="display:flex; align-items:center; flex-wrap:wrap;">
-          <span class="rank-badge">${index+1}</span>
-          <h3>${item.label} <span class="score">(${item.score}/7)</span></h3>
-        </div>
-        <div class="desc">${item.desc}</div>
-      `;
-      list.appendChild(div);
+      if (!currentUid) {
+        historyList.innerHTML = '❌ Sesi tidak valid.';
+        return;
+      }
+
+      try {
+        const q = query(
+          collection(db, 'riasec_results'),
+          where('uid', '==', currentUid),
+          orderBy('timestamp', 'desc')
+        );
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          historyList.innerHTML = '📭 Belum ada riwayat tes untuk Anda.';
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const scores = data.scores || {};
+          const waktu = data.timestamp?.toDate?.()
+            ? data.timestamp.toDate().toLocaleString('id-ID')
+            : 'Tidak diketahui';
+          html += `
+            <div class="history-item">
+              <strong>${data.nama || 'Tanpa nama'}</strong>
+              (${data.pendidikan || '-'}, ${data.umur || '-'} thn)
+              — Skor: R=${scores.R || 0}, I=${scores.I || 0}, A=${scores.A || 0},
+              S=${scores.S || 0}, E=${scores.E || 0}, C=${scores.C || 0}
+              <br /><small>🕒 ${waktu}</small>
+            </div>
+          `;
+        });
+        historyList.innerHTML = html;
+
+      } catch (error) {
+        console.error('Gagal ambil riwayat:', error);
+        historyList.innerHTML =
+          '❌ Gagal memuat riwayat. Pastikan aturan keamanan sudah diatur.\n' +
+          error.message;
+      }
     });
-
-    // Scroll ke hasil
-    resultContainer.scrollIntoView({ behavior: 'smooth' });
-  });
-</script>
+  </script>
 </body>
 </html>
