@@ -168,10 +168,10 @@
 <body>
   <div class="container">
     <div class="admin-link"><a href="admin.html" target="_blank">👤 Admin Panel</a></div>
-    <h1>Tes Minat Bakat</h1>
+    <h1>🧠 Tes Minat RIASEC</h1>
 
     <!-- Status Sesi -->
-    <div class="user-status" id="userStatus">Menyiapkan sesi aman...</div>
+    <div class="user-status" id="userStatus">⏳ Menyiapkan sesi aman...</div>
 
     <!-- FORM REGISTRASI PESERTA -->
     <div id="registrationForm">
@@ -195,18 +195,18 @@
         <label>Umur (tahun)</label>
         <input type="number" id="umur" placeholder="Contoh: 22" min="1" max="120" required />
       </div>
-      <button class="btn-primary" id="startBtn">Mulai Tes</button>
+      <button class="btn-primary" id="startBtn">🚀 Mulai Tes</button>
     </div>
 
-    <!-- KONTENER SOAL (acak, tanpa label kategori) -->
+    <!-- KONTENER SOAL -->
     <div id="testContainer" class="hidden">
       <div id="questionsContainer"></div>
-      <button class="btn-primary" id="submitBtn">Lihat Hasil & Simpan</button>
+      <button class="btn-primary" id="submitBtn">📊 Lihat Hasil & Simpan</button>
     </div>
 
     <!-- KONTENER HASIL -->
     <div class="results" id="resultsContainer">
-      <h2 style="text-align:center; color:#2c3e50;">Hasil Minat Saya</h2>
+      <h2 style="text-align:center; color:#2c3e50;">📊 Hasil Minat Saya</h2>
       <div id="resultList"></div>
       <p style="text-align:center; margin-top:20px; color:#2c3e50;">
         ✅ Data Anda telah tersimpan dengan aman.
@@ -255,6 +255,7 @@
     // 3. LOGIN ANONIM OTOMATIS
     // ============================================================
     let currentUid = null;
+    let startTime = null; // Waktu mulai tes (untuk durasi)
     const userStatusEl = document.getElementById('userStatus');
 
     onAuthStateChanged(auth, async (user) => {
@@ -274,7 +275,7 @@
     });
 
     // ============================================================
-    // 4. DATA KATEGORI & PERTANYAAN (VERSI BARU)
+    // 4. DATA KATEGORI & PERTANYAAN
     // ============================================================
     const categories = [{
       id: 'R',
@@ -323,7 +324,7 @@
         'Saya suka bekerja dalam tim',
         'Saya suka mengajar atau melatih orang lain',
         'Saya suka mencoba membantu orang lain memecahkan masalah mereka',
-        'Saya tertarik untuk menyembuhkan orang',
+        'Saya tertarik pada penyembuhan orang',
         'Saya senang mempelajari budaya lain',
         'Saya suka terlibat dalam diskusi mengenai berbagai isu',
         'Saya suka membantu orang lain'
@@ -346,7 +347,7 @@
       label: 'Konvensional (C)',
       desc: 'Orang Konvensional sangat berorientasi pada detail, terorganisir dan suka bekerja dengan data. Jurusan: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
       questions: [
-        'Saya suka merapikan berbagai hal (berkas, meja/kantor)',
+        'Saya suka mengatur berbagai hal (berkas, meja/kantor)',
         'Saya suka mendapatkan instruksi yang jelas untuk diikuti',
         'Saya tidak keberatan bekerja 8 jam sehari di kantor',
         'Saya memperhatikan detail',
@@ -366,7 +367,6 @@
           all.push({ catId: cat.id, catIdx, qIdx, text });
         });
       });
-      // Fisher-Yates shuffle
       for (let i = all.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [all[i], all[j]] = [all[j], all[i]];
@@ -388,7 +388,7 @@
     const resultsContainer = document.getElementById('resultsContainer');
     const resultList = document.getElementById('resultList');
 
-    // Tombol Mulai Tes
+    // Tombol Mulai Tes - catat waktu mulai
     document.getElementById('startBtn').addEventListener('click', function () {
       const nama = document.getElementById('nama').value.trim();
       const pendidikan = document.getElementById('pendidikan').value;
@@ -398,6 +398,10 @@
       if (!umur || umur < 1) { alert('Umur wajib diisi dengan angka yang valid!'); return; }
 
       pesertaData = { nama, pendidikan, umur };
+
+      // Catat waktu mulai (dalam format ISO string)
+      startTime = new Date().toISOString();
+
       registrationForm.classList.add('hidden');
       testContainer.classList.remove('hidden');
 
@@ -438,7 +442,7 @@
     }
 
     // ============================================================
-    // 7. SUBMIT & SIMPAN
+    // 7. SUBMIT & SIMPAN (dengan startTime & endTime)
     // ============================================================
     submitBtn.addEventListener('click', async function () {
       const btn = this;
@@ -451,6 +455,9 @@
         btn.textContent = '📊 Lihat Hasil & Simpan';
         return;
       }
+
+      // Catat waktu selesai
+      const endTime = new Date().toISOString();
 
       // Kumpulkan jawaban
       const answers = [];
@@ -484,22 +491,28 @@
         desc: cat.desc
       }));
 
-      // Data untuk disimpan
+      // Data untuk disimpan (dengan startTime, endTime, dan durasi dalam detik)
+      const startDate = new Date(startTime);
+      const endDate = new Date(endTime);
+      const durationSeconds = Math.round((endDate - startDate) / 1000); // durasi dalam detik
+
       const dataToSave = {
         nama: pesertaData.nama,
         pendidikan: pesertaData.pendidikan,
         umur: pesertaData.umur,
         scores: scoreMap,
         uid: currentUid,
+        startTime: startTime,
+        endTime: endTime,
+        durationSeconds: durationSeconds,
         timestamp: serverTimestamp()
       };
 
       try {
-        // Simpan ke Firestore
         await addDoc(collection(db, 'riasec_results'), dataToSave);
         console.log('Data berhasil disimpan!');
 
-        // Tampilkan hasil (urut dari skor tertinggi)
+        // Tampilkan hasil
         const sorted = scores.slice().sort((a, b) => b.score - a.score);
         resultsContainer.style.display = 'block';
         resultList.innerHTML = '';
