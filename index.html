@@ -14,166 +14,43 @@
     }
   </script>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    body {
-      background: #f5f7fa;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #2c3e50;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 12px;
-    }
-    .form-group {
-      margin-bottom: 18px;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-      color: #2c3e50;
-    }
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    .btn-primary {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.2s;
-    }
-    .btn-primary:hover {
-      background: #2980b9;
-    }
-    .btn-primary:disabled {
-      background: #bdc3c7;
-      cursor: not-allowed;
-    }
-    .question-block {
-      margin: 20px 0;
-      padding: 12px 16px;
-      background: #f8fafc;
-      border-radius: 10px;
-      border-left: 4px solid #3498db;
-    }
-    .question-text {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-    .options label {
-      margin-right: 20px;
-      cursor: pointer;
-    }
-    .options input[type="radio"] {
-      margin-right: 4px;
-    }
-    .results {
-      margin-top: 30px;
-      padding: 20px;
-      background: #eaf2f8;
-      border-radius: 12px;
-      display: none;
-    }
-    .result-item {
-      background: white;
-      padding: 16px 20px;
-      margin: 12px 0;
-      border-radius: 10px;
-      border-left: 8px solid #3498db;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-    .result-item h3 {
-      margin: 0;
-    }
-    .result-item .score {
-      font-weight: bold;
-      color: #e67e22;
-      font-size: 1.2em;
-    }
-    .result-item .desc {
-      margin-top: 8px;
-      color: #34495e;
-      line-height: 1.6;
-    }
-    .rank-badge {
-      display: inline-block;
-      background: #2c3e50;
-      color: white;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      text-align: center;
-      line-height: 28px;
-      font-weight: bold;
-      margin-right: 12px;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #7f8c8d;
-      font-size: 0.9em;
-    }
-    .hidden {
-      display: none;
-    }
-    .admin-link {
-      text-align: right;
-      margin-bottom: 10px;
-    }
-    .admin-link a {
-      color: #7f8c8d;
-      text-decoration: none;
-      font-size: 0.9em;
-    }
-    .admin-link a:hover {
-      color: #3498db;
-    }
-    .user-status {
-      text-align: center;
-      color: #555;
-      margin-bottom: 20px;
-    }
-    @media (max-width: 600px) {
-      .options label {
-        display: inline-block;
-        margin-right: 12px;
-      }
-    }
+    /* --- style sama seperti sebelumnya, tidak diubah --- */
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #f5f7fa; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 12px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #2c3e50; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+    .btn-primary { background: #3498db; color: white; border: none; padding: 14px 28px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+    .btn-primary:hover { background: #2980b9; }
+    .btn-primary:disabled { background: #bdc3c7; cursor: not-allowed; }
+    .question-block { margin: 20px 0; padding: 12px 16px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #3498db; }
+    .question-text { font-size: 16px; margin-bottom: 8px; }
+    .options label { margin-right: 20px; cursor: pointer; }
+    .options input[type="radio"] { margin-right: 4px; }
+    .results { margin-top: 30px; padding: 20px; background: #eaf2f8; border-radius: 12px; display: none; }
+    .result-item { background: white; padding: 16px 20px; margin: 12px 0; border-radius: 10px; border-left: 8px solid #3498db; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .result-item h3 { margin: 0; }
+    .result-item .score { font-weight: bold; color: #e67e22; font-size: 1.2em; }
+    .result-item .desc { margin-top: 8px; color: #34495e; line-height: 1.6; }
+    .rank-badge { display: inline-block; background: #2c3e50; color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 12px; }
+    .footer { text-align: center; margin-top: 30px; color: #7f8c8d; font-size: 0.9em; }
+    .hidden { display: none; }
+    .admin-link { text-align: right; margin-bottom: 10px; }
+    .admin-link a { color: #7f8c8d; text-decoration: none; font-size: 0.9em; }
+    .admin-link a:hover { color: #3498db; }
+    .user-status { text-align: center; color: #555; margin-bottom: 20px; }
+    @media (max-width: 600px) { .options label { display: inline-block; margin-right: 12px; } }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="admin-link"><a href="admin.html" target="_blank">👤 Admin Panel</a></div>
     <h1>🧠 Tes Minat RIASEC</h1>
-
-    <!-- Status Sesi -->
     <div class="user-status" id="userStatus">⏳ Menyiapkan sesi aman...</div>
 
-    <!-- FORM REGISTRASI PESERTA -->
+    <!-- FORM REGISTRASI -->
     <div id="registrationForm">
       <div class="form-group">
         <label>Nama Lengkap</label>
@@ -198,13 +75,13 @@
       <button class="btn-primary" id="startBtn">🚀 Mulai Tes</button>
     </div>
 
-    <!-- KONTENER SOAL -->
+    <!-- SOAL -->
     <div id="testContainer" class="hidden">
       <div id="questionsContainer"></div>
       <button class="btn-primary" id="submitBtn">📊 Lihat Hasil & Simpan</button>
     </div>
 
-    <!-- KONTENER HASIL -->
+    <!-- HASIL -->
     <div class="results" id="resultsContainer">
       <h2 style="text-align:center; color:#2c3e50;">📊 Hasil Minat Saya</h2>
       <div id="resultList"></div>
@@ -213,31 +90,14 @@
       </p>
     </div>
 
-    <div class="footer">
-      Berdasarkan teori Holland · Kode minat membantu menemukan jurusan/karier yang cocok.
-    </div>
+    <div class="footer">Berdasarkan teori Holland · Kode minat membantu menemukan jurusan/karier yang cocok.</div>
   </div>
 
   <script type="module">
-    // ============================================================
-    // 1. IMPOR FIREBASE
-    // ============================================================
     import { initializeApp } from 'firebase/app';
-    import {
-      getAuth,
-      signInAnonymously,
-      onAuthStateChanged
-    } from 'firebase/auth';
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      serverTimestamp
-    } from 'firebase/firestore';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+    import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-    // ============================================================
-    // 2. KONFIGURASI FIREBASE (dari Anda)
-    // ============================================================
     const firebaseConfig = {
       apiKey: 'AIzaSyCU-KgCUo-ma5chOEVpnZ2ycpVWC2spIg8',
       authDomain: 'tes-riasec-rana.firebaseapp.com',
@@ -251,115 +111,90 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ============================================================
-    // 3. LOGIN ANONIM OTOMATIS
-    // ============================================================
     let currentUid = null;
-    let startTime = null; // Waktu mulai tes (untuk durasi)
     const userStatusEl = document.getElementById('userStatus');
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUid = user.uid;
-        userStatusEl.innerHTML = `✅ Sesi aman aktif (ID: ${currentUid.substring(0, 8)}...)`;
+        userStatusEl.innerHTML = `✅ Sesi aman aktif (ID: ${currentUid.substring(0,8)}...)`;
       } else {
         try {
           const cred = await signInAnonymously(auth);
           currentUid = cred.user.uid;
-          userStatusEl.innerHTML = `✅ Sesi anonim aktif (ID: ${currentUid.substring(0, 8)}...)`;
+          userStatusEl.innerHTML = `✅ Sesi anonim aktif (ID: ${currentUid.substring(0,8)}...)`;
         } catch (error) {
-          console.error('Gagal login anonim:', error);
+          console.error(error);
           userStatusEl.innerHTML = '❌ Gagal membuat sesi aman. Refresh halaman.';
         }
       }
     });
 
-    // ============================================================
-    // 4. DATA KATEGORI & PERTANYAAN
-    // ============================================================
-    const categories = [{
-      id: 'R',
-      label: 'Realistik (R)',
-      desc: 'Orang Realistik sering pandai dalam pekerjaan mekanik atau atletik. Jurusan: Pertanian, Asisten Kesehatan, Komputer, Konstruksi, Mekanik/Mesin, Teknik, Makanan dan Perhotelan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya suka mengutak-atik mobil atau motor',
-        'Saya suka membuat sesuatu',
-        'Saya suka merawat hewan',
-        'Saya suka merakit atau menyusun sesuatu',
-        'Saya suka memasak',
-        'Saya adalah orang yang praktis',
-        'Saya suka bekerja di luar ruangan'
-      ]
-    }, {
-      id: 'I',
-      label: 'Investigatif (I)',
-      desc: 'Orang Investigatif suka mengamati, belajar, menganalisis dan memecahkan masalah. Jurusan: Biologi Kelautan, Teknik, Kimia, Zoologi, Kedokteran/Bedah, Ekonomi Konsumen, Psikologi. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya suka mengerjakan teka-teki',
-        'Saya suka melakukan eksperimen',
-        'Saya menikmati sains',
-        'Saya menikmati mencoba memahami cara kerja sesuatu',
-        'Saya suka menganalisis berbagai hal (masalah/situasi)',
-        'Saya suka bekerja dengan angka atau grafik',
-        'Saya pandai matematika'
-      ]
-    }, {
-      id: 'A',
-      label: 'Artistik (A)',
-      desc: 'Orang Artistik suka bekerja dalam situasi tidak terstruktur di mana mereka dapat menggunakan kreativitas mereka. Jurusan: Komunikasi, Tata Rias, Seni Pertunjukan, Fotografi, Radio dan TV, Desain Interior, Arsitektur. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya pandai bekerja secara mandiri',
-        'Saya suka membaca tentang seni dan musik',
-        'Saya menikmati menulis kreatif',
-        'Saya orang yang kreatif',
-        'Saya suka memainkan alat musik atau bernyanyi',
-        'Saya suka berakting dalam drama',
-        'Saya suka menggambar'
-      ]
-    }, {
-      id: 'S',
-      label: 'Sosial (S)',
-      desc: 'Orang Sosial suka bekerja dengan orang lain, daripada benda. Jurusan: Konseling, Keperawatan, Fisioterapi, Perjalanan/Travel, Periklanan, Hubungan Masyarakat, Pendidikan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya suka bekerja dalam tim',
-        'Saya suka mengajar atau melatih orang lain',
-        'Saya suka mencoba membantu orang lain memecahkan masalah mereka',
-        'Saya tertarik pada penyembuhan orang',
-        'Saya senang mempelajari budaya lain',
-        'Saya suka terlibat dalam diskusi mengenai berbagai isu',
-        'Saya suka membantu orang lain'
-      ]
-    }, {
-      id: 'E',
-      label: 'Enterprising (E)',
-      desc: 'Orang Enterprising suka bekerja dengan orang lain dan menikmati membujuk serta tampil. Jurusan: Merchandising Busana, Real Estat, Pemasaran/Penjualan, Hukum, Ilmu Politik, Perdagangan Internasional, Perbankan/Keuangan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya orang yang ambisius dan saya menetapkan tujuan untuk diri sendiri',
-        'Saya suka mencoba memengaruhi atau meyakinkan orang lain',
-        'Saya suka menjual barang',
-        'Saya cepat dalam mengambil tanggung jawab baru',
-        'Saya ingin memulai bisnis sendiri',
-        'Saya suka memimpin',
-        'Saya suka berpidato'
-      ]
-    }, {
-      id: 'C',
-      label: 'Konvensional (C)',
-      desc: 'Orang Konvensional sangat berorientasi pada detail, terorganisir dan suka bekerja dengan data. Jurusan: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
-      questions: [
-        'Saya suka mengatur berbagai hal (berkas, meja/kantor)',
-        'Saya suka mendapatkan instruksi yang jelas untuk diikuti',
-        'Saya tidak keberatan bekerja 8 jam sehari di kantor',
-        'Saya memperhatikan detail',
-        'Saya suka mengarsipkan dokumen atau mengetik',
-        'Saya pandai mencatat hasil kerja saya',
-        'Saya ingin bekerja di kantor'
-      ]
-    }];
+    // ======= DATA PERTANYAAN (versi terbaru dari Anda) =======
+    const categories = [
+      { id: 'R', label: 'Realistik (R)', desc: 'Orang Realistik sering pandai dalam pekerjaan mekanik atau atletik. Jurusan: Pertanian, Asisten Kesehatan, Komputer, Konstruksi, Mekanik/Mesin, Teknik, Makanan dan Perhotelan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya suka bekerja dengan mobil atau motor',
+          'Saya suka membangun sesuatu',
+          'Saya suka merawat hewan',
+          'Saya suka merakit atau menyusun sesuatu',
+          'Saya suka memasak',
+          'Saya orang yang praktikal',
+          'Saya suka bekerja di luar ruangan'
+        ] },
+      { id: 'I', label: 'Investigatif (I)', desc: 'Orang Investigatif suka mengamati, belajar, menganalisis dan memecahkan masalah. Jurusan: Biologi Kelautan, Teknik, Kimia, Zoologi, Kedokteran/Bedah, Ekonomi Konsumen, Psikologi. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya suka mengerjakan teka-teki',
+          'Saya suka melakukan eksperimen',
+          'Saya menikmati sains',
+          'Saya selalu mencoba mencari tahu bagaimana suatu benda bekerja',
+          'Saya suka menganalisis masalah/situasi',
+          'Saya suka bekerja dengan angka atau grafik',
+          'Saya pandai dalam matematika'
+        ] },
+      { id: 'A', label: 'Artistik (A)', desc: 'Orang Artistik suka bekerja dalam situasi tidak terstruktur di mana mereka dapat menggunakan kreativitas mereka. Jurusan: Komunikasi, Tata Rias, Seni Pertunjukan, Fotografi, Radio dan TV, Desain Interior, Arsitektur. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya suka bekerja sendiri',
+          'Saya suka membaca mengenai seni dan musik',
+          'Saya suka menulis hal-hal kreatif',
+          'Saya adalah orang yang kreatif',
+          'Saya suka bermain alat musik atau bernyanyi',
+          'Saya suka berakting peran',
+          'Saya suka menggambar'
+        ] },
+      { id: 'S', label: 'Sosial (S)', desc: 'Orang Sosial suka bekerja dengan orang lain, daripada benda. Jurusan: Konseling, Keperawatan, Fisioterapi, Perjalanan/Travel, Periklanan, Hubungan Masyarakat, Pendidikan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya suka bekerja dalam kelompok',
+          'Saya suka mengajar atau melatih orang lain',
+          'Saya suka membantu orang lain menyelesaikan masalahnya',
+          'Saya suka menyembuhkan orang lain',
+          'Saya suka mempelajari budaya lain',
+          'Saya suka terlibat dalam diskusi suatu isu',
+          'Saya suka membantu orang lain'
+        ] },
+      { id: 'E', label: 'Enterprising (E)', desc: 'Orang Enterprising suka bekerja dengan orang lain dan menikmati membujuk serta tampil. Jurusan: Merchandising Busana, Real Estat, Pemasaran/Penjualan, Hukum, Ilmu Politik, Perdagangan Internasional, Perbankan/Keuangan. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya orang yang ambisius dan saya menetapkan tujuan saya sendiri',
+          'Saya suka mencoba memengaruhi atau meyakinkan orang lain',
+          'Saya suka berjualan',
+          'Saya cepat dalam mengambil tanggung jawab baru',
+          'Saya ingin memulai bisnis saya sendiri',
+          'Saya suka memimpin',
+          'Saya suka memberikan pidato'
+        ] },
+      { id: 'C', label: 'Konvensional (C)', desc: 'Orang Konvensional sangat berorientasi pada detail, terorganisir dan suka bekerja dengan data. Jurusan: Akuntansi, Pencatatan Hukum, Asuransi, Administrasi, Rekam Medis, Perbankan, Pengolahan Data. Jalur: Kesehatan, Bisnis, Industri & Teknologi Rekayasa.',
+        questions: [
+          'Saya suka menyusun berbagai hal (arsip, meja/ruangan)',
+          'Saya suka mendapat arahan yang jelas',
+          'Saya tidak masalah bekerja 8 jam sehari dalam kantor',
+          'Saya memperhatikan sesuatu dengan detail',
+          'Saya suka mengarsipkan dokumen atau mengetik',
+          'Saya pandai mencatat hasil kerja saya',
+          'Saya ingin bekerja di kantor'
+        ] }
+    ];
 
-    // ============================================================
-    // 5. FUNGSI ACK PERTANYAAN
-    // ============================================================
+    // ======= FUNGSI ACK =======
     function buildShuffledQuestions() {
       const all = [];
       categories.forEach((cat, catIdx) => {
@@ -375,12 +210,9 @@
     }
 
     let shuffledQuestions = [];
+    let waktuMulai = null;  // akan diisi saat tombol "Mulai Tes" ditekan
 
-    // ============================================================
-    // 6. LOGIKA APLIKASI
-    // ============================================================
-    let pesertaData = {};
-
+    // ======= ELEMEN DOM =======
     const registrationForm = document.getElementById('registrationForm');
     const testContainer = document.getElementById('testContainer');
     const questionsContainer = document.getElementById('questionsContainer');
@@ -388,23 +220,22 @@
     const resultsContainer = document.getElementById('resultsContainer');
     const resultList = document.getElementById('resultList');
 
-    // Tombol Mulai Tes - catat waktu mulai
-    document.getElementById('startBtn').addEventListener('click', function () {
+    let pesertaData = {};
+
+    // Tombol Mulai Tes → catat waktu mulai
+    document.getElementById('startBtn').addEventListener('click', function() {
       const nama = document.getElementById('nama').value.trim();
       const pendidikan = document.getElementById('pendidikan').value;
       const umur = parseInt(document.getElementById('umur').value);
-
       if (!nama) { alert('Nama wajib diisi!'); return; }
       if (!umur || umur < 1) { alert('Umur wajib diisi dengan angka yang valid!'); return; }
 
       pesertaData = { nama, pendidikan, umur };
-
-      // Catat waktu mulai (dalam format ISO string)
-      startTime = new Date().toISOString();
+      // Catat waktu mulai (dalam milidetik)
+      waktuMulai = Date.now();
 
       registrationForm.classList.add('hidden');
       testContainer.classList.remove('hidden');
-
       shuffledQuestions = buildShuffledQuestions();
       renderShuffledQuestions();
     });
@@ -416,9 +247,8 @@
         block.className = 'question-block';
         const qText = document.createElement('div');
         qText.className = 'question-text';
-        qText.textContent = `${index + 1}. ${item.text}`;
+        qText.textContent = `${index+1}. ${item.text}`;
         block.appendChild(qText);
-
         const optDiv = document.createElement('div');
         optDiv.className = 'options';
         const radioSet = [
@@ -441,32 +271,27 @@
       });
     }
 
-    // ============================================================
-    // 7. SUBMIT & SIMPAN (dengan startTime & endTime)
-    // ============================================================
-    submitBtn.addEventListener('click', async function () {
+    // Tombol Submit → hitung durasi
+    submitBtn.addEventListener('click', async function() {
       const btn = this;
       btn.disabled = true;
       btn.textContent = '⏳ Menyimpan...';
 
       if (!currentUid) {
-        alert('Sesi belum siap. Tunggu sebentar atau refresh halaman.');
+        alert('Sesi belum siap. Tunggu sebentar.');
         btn.disabled = false;
         btn.textContent = '📊 Lihat Hasil & Simpan';
         return;
       }
 
-      // Catat waktu selesai
-      const endTime = new Date().toISOString();
-
-      // Kumpulkan jawaban
+      // 1. Kumpulkan jawaban
       const answers = [];
       for (let i = 0; i < shuffledQuestions.length; i++) {
         const radios = document.querySelectorAll(`input[name="q_${i}"]`);
         let selected = null;
         radios.forEach(r => { if (r.checked) selected = r.value; });
         if (selected === null) {
-          alert(`Pertanyaan nomor ${i + 1} belum dijawab. Harap lengkapi semua!`);
+          alert(`Pertanyaan nomor ${i+1} belum dijawab. Harap lengkapi semua!`);
           btn.disabled = false;
           btn.textContent = '📊 Lihat Hasil & Simpan';
           return;
@@ -474,37 +299,28 @@
         answers.push(parseInt(selected, 10));
       }
 
-      // Hitung skor per kategori
+      // 2. Hitung skor
       const scoreMap = {};
       categories.forEach(cat => { scoreMap[cat.id] = 0; });
-
       shuffledQuestions.forEach((item, idx) => {
         if (answers[idx] === 1) {
           scoreMap[item.catId] = (scoreMap[item.catId] || 0) + 1;
         }
       });
 
-      const scores = categories.map(cat => ({
-        id: cat.id,
-        label: cat.label,
-        score: scoreMap[cat.id] || 0,
-        desc: cat.desc
-      }));
+      // 3. Hitung durasi (dalam detik)
+      const waktuSelesai = Date.now();
+      const durasiDetik = Math.floor((waktuSelesai - waktuMulai) / 1000);
 
-      // Data untuk disimpan (dengan startTime, endTime, dan durasi dalam detik)
-      const startDate = new Date(startTime);
-      const endDate = new Date(endTime);
-      const durationSeconds = Math.round((endDate - startDate) / 1000); // durasi dalam detik
-
+      // 4. Siapkan data + durasi & waktu mulai
       const dataToSave = {
         nama: pesertaData.nama,
         pendidikan: pesertaData.pendidikan,
         umur: pesertaData.umur,
         scores: scoreMap,
         uid: currentUid,
-        startTime: startTime,
-        endTime: endTime,
-        durationSeconds: durationSeconds,
+        waktuMulai: new Date(waktuMulai).toISOString(),  // simpan sebagai string ISO
+        durasi: durasiDetik,                            // dalam detik
         timestamp: serverTimestamp()
       };
 
@@ -513,6 +329,12 @@
         console.log('Data berhasil disimpan!');
 
         // Tampilkan hasil
+        const scores = categories.map(cat => ({
+          id: cat.id,
+          label: cat.label,
+          score: scoreMap[cat.id] || 0,
+          desc: cat.desc
+        }));
         const sorted = scores.slice().sort((a, b) => b.score - a.score);
         resultsContainer.style.display = 'block';
         resultList.innerHTML = '';
@@ -523,7 +345,7 @@
           div.style.borderLeftColor = colors[index % colors.length];
           div.innerHTML = `
             <div style="display:flex; align-items:center; flex-wrap:wrap;">
-              <span class="rank-badge">${index + 1}</span>
+              <span class="rank-badge">${index+1}</span>
               <h3>${item.label} <span class="score">(${item.score}/7)</span></h3>
             </div>
             <div class="desc">${item.desc}</div>
@@ -536,7 +358,7 @@
 
       } catch (error) {
         console.error('Gagal simpan:', error);
-        alert('Terjadi kesalahan saat menyimpan data. Coba lagi nanti.\n' + error.message);
+        alert('Gagal menyimpan: ' + error.message);
       }
 
       btn.disabled = false;
